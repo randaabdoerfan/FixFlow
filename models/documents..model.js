@@ -1,0 +1,14 @@
+const mongoose = require('mongoose')
+
+const documentSchema = new mongoose.Schema({
+    sender:{type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: [true, "You should login first"]},
+    receiver:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "teamMember",
+        required:[true,"you should assigned this document to "]},
+    file_url:{type:String},
+    ticket_id:{type:mongoose.Schema.Types.ObjectId,required:[true,"ticket should be selected"]}
+})
+module.exports = mongoose.model('Document',documentSchema)
