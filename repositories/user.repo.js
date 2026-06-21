@@ -1,7 +1,10 @@
 const User = require('../models/user.model');
-
+const Team = require('../models/teams.model');
 
 exports.createUser = async (data) => {
+    const team = await Team.findOne({ _id: data.team });
+    const teamId = team ? team._id : null;
+    data.team = teamId;
     return await User.create(data)
 }
 exports.loginUser = async (data) => {
@@ -15,7 +18,7 @@ exports.getUserById = async (id) => {
     return await User.findById(id)
 }
 exports.updateUser = async (id, data) => {
-    return await User.findByIdAndUpdate(id, { data }, { new: true })
+    return await User.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true })
 }
 
 exports.deleteUser = async (id) => {
@@ -34,10 +37,10 @@ exports.getUserByRole = async (role) => {
 }
 
 exports.updatePassword = async (id, newPassword) => {
-    return await User.findByIdAndUpdate(id, { password: newPassword }, { new: true })
+    return await User.findByIdAndUpdate(id, { password: newPassword }, { returnDocument: 'after', runValidators: true })
 }
 exports.updateAvatar = async (id, avatarUrl) => {
-    return await User.findByIdAndUpdate(id, { avatar: avatarUrl }, { new: true })
+    return await User.findByIdAndUpdate(id, { avatar: avatarUrl }, { returnDocument: 'after', runValidators: true })
 }
 
 exports.getUserInformation = async (id) => {
@@ -45,7 +48,6 @@ exports.getUserInformation = async (id) => {
         .populate("name")
         .populate("email")
         .populate("role")
-        .populate("team")
         .populate("phone")
         .populate("avatar")
 }

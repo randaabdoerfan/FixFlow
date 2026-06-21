@@ -13,7 +13,7 @@ mongoose.connect("mongodb://localhost:27017/Graduation")
 .catch((err)=>{console.log(err)})
 
 app.use('/users',userRoutes)
-app.use(handleError)
+app.use(handleError);
 app.listen(process.env.port,()=>{
     console.log("Server Running ...")
 })

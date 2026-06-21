@@ -1,5 +1,4 @@
-const { createUser,
-    loginUser,
+const {
     getAllUsers,
     getUserById,
     updateUser,
@@ -12,20 +11,8 @@ const { createUser,
     updateAvatar
 } = require('../repositories/user.repo');
 const AppError = require('../utilities/appError');
+const bcrypt = require('bcrypt');
 
-exports.createUser = async (data) => {
-    if (!data) { throw new AppError("no data", 400) }
-    if (await getUserByEmail(data.email)) {
-        throw new AppError("Email already exists", 400);}
-    if(data.password !== data.confirmPassword){
-    throw new AppError("Password and confirm password do not match", 400);  }
-    return await createUser(data)
-    }
-
-exports.loginUser = async (data) => {
-    if (!data) { throw new AppError("no data", 400) }  
-    return await loginUser(data)
-}
 
 exports.getAllUsers = async () => {
     return await getAllUsers()
@@ -67,14 +54,17 @@ exports.getUserInformation = async (id) => {
     return await getUserInformation(id)
 }
 
-exports.updatePassword = async (id, newPassword) => {
+exports.updatePassword = async (id, oldPasssword,newPassword) => {
     if (!id) { throw new AppError("no id please add the id", 400) }
     if (!newPassword) { throw new AppError("no new password please add the new password", 400) }
     const user = await getUserById(id)
+    if(oldPasssword){
+        const isMatch = await bcrypt.compare(oldPasssword, user.password);
+        if (!isMatch) { throw new AppError("old password is incorrect", 400) }
+    }
     if (!user) { throw new AppError("user not found", 404) }
-    user.password = newPassword
-    await user.save()
-    return user
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    return await updatePassword(id, newPasswordHash)
 }
 
 exports.updateAvatar = async (id, avatarUrl) => {

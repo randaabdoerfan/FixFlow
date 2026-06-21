@@ -1,5 +1,4 @@
-const {createUser,
-    loginUser,
+const { 
     getAllUsers,
     getUserById,
     updateUser,
@@ -9,47 +8,11 @@ const {createUser,
     getUserByTeam,
     getUserInformation,
     updateAvatar,
-    updatePassword} = require('../services/user.service');
+    updatePassword } = require('../services/user.service');
+const generateToken = require('../utilities/genrateToken');
+const AppError = require('../utilities/appError');
 
-exports.registerUser = async (req, res) => {
-    try {
-        const avatar = req.file ? req.file.path : null;
-        const userData = { ...req.body, avatar };
-        const newUser = await createUser(userData);
-        
-        res.status(201).json({message:"User created successfully"},newUser);
-    } catch (err) {
-        console.log(err);
-        res.status(400).json({
-            success: false,
-            message: err.message
-        });
-    }   
-};
-exports.loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;   
-        console.log(email,password)
-        const user = await getUserByEmail(email);
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid email or password' });
-        }
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
-        }
-        const token = generateToken(user);
-        user.userToken = token;
-        await user.save();
-        res.status(200).json({ message: 'Login successful', token });
-    } catch (err) {
-        console.log(err);
-        res.status(400).json({
-            success: false,
-            message: err.message
-        });
-    } 
-};  
+
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -57,7 +20,7 @@ exports.getAllUsers = async (req, res) => {
         res.status(200).json(users);
     } catch (err) {
 
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });
@@ -71,20 +34,21 @@ exports.getUserById = async (req, res) => {
         res.status(200).json(user);
     } catch (err) {
 
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });
-    }   
+    }
 };
 
 exports.updateUser = async (req, res) => {
     try {
         const id = req.params.id;
+        console.log(req.body);
         const updatedUser = await updateUser(id, req.body);
         res.status(200).json(updatedUser);
     } catch (err) {
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });
@@ -95,7 +59,7 @@ exports.deleteUser = async (req, res) => {
     try {
         const id = req.params.id;
         await deleteUser(id);
-        res.status(204).json();
+        res.status(204).json({ message: 'User deleted successfully' });
     } catch (err) {
 
         res.status(400).json({
@@ -112,7 +76,7 @@ exports.getUserByEmail = async (req, res) => {
         const user = await getUserByEmail(email);
         res.status(200).json(user);
     } catch (err) {
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });
@@ -138,7 +102,7 @@ exports.getUserByRole = async (req, res) => {
         const users = await getUserByRole(role);
         res.status(200).json(users);
     } catch (err) {
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });
@@ -165,7 +129,7 @@ exports.updatePassword = async (req, res) => {
         await updatePassword(id, oldPassword, newPassword);
         res.status(200).json({ message: 'Password updated successfully' });
     } catch (err) {
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });
@@ -179,7 +143,7 @@ exports.updateAvatar = async (req, res) => {
         await updateAvatar(id, avatar);
         res.status(200).json({ message: 'Avatar updated successfully' });
     } catch (err) {
-       res.status(400).json({
+        res.status(400).json({
             success: false,
             message: err.message
         });

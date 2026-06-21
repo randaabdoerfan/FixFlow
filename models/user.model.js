@@ -20,28 +20,31 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'manager', 'user'],
+      enum: ['admin', 'manager',"agent", 'user'],
       default: 'user',
     },
     socketId:{type:String},
     team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: null },
-    phone: { type: String, default: null },
+    phone: { type: String,
+      match: [/^(01)[0-2,5]{1}[0-9]{8}$/, 'Please provide a valid phone number'],
+      default: null },
     avatar: { type: String, default: null },
     isActive: { type: Boolean, default: true },
     isEmailVerified: { type: Boolean, default: false ,select:false}, //emailServices
     lastLogin: { type: Date, default: null },
     passwordResetToken: { type: String, select: false },
-    // passwordResetExpires: { type: Date, select: false },
+    passwordResetExpires: { type: Date, select: false },
     userToken:{type:String},
     refreshTokenHash: { type: String, select: false },
   },
   { timestamps: true }
 );
 userSchema.pre('save', async function () {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  this.confirmPassword = undefined;
-})
+    if (!this.isModified('password')) return;
+
+    this.password = await bcrypt.hash(this.password, 10);
+    this.confirmPassword = undefined;
+});
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 }

@@ -5,6 +5,5 @@ const handleError = (err, req, res, next) => {
         failed: true,
         message: message
     })
-    next()
 }
 module.exports = handleError
