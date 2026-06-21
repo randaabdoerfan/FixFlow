@@ -8,7 +8,8 @@ const documentSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         required:[true,"you should assigned this document to "]},
-    file_url:{type:String},
-    ticket_id:{type:mongoose.Schema.Types.ObjectId, ref: "Ticket", required:[true,"ticket should be selected"]}
+    file_url:{type:Array},
+    ticket_id:{type:mongoose.Schema.Types.ObjectId, ref: "Ticket" }
+    // required:[true,"ticket should be selected"]
 })
 module.exports = mongoose.model('Document',documentSchema)

@@ -7,7 +7,7 @@ const teamSchema = new mongoose.Schema({
    trim:true,
     enum:['IT','AI','HR','salse','managment','UI/UX','design','marketing','Frontend','Backend','testing','quality assurance']
    },
-   number_of_team:{type:BigInt},
+   number_of_team:{type:Number, default:0},
    managerId:{type:mongoose.Schema.Types.ObjectId,ref:'User'}
 }, { timestamps: true })
 
