@@ -6,9 +6,9 @@ const documentSchema = new mongoose.Schema({
             required: [true, "You should login first"]},
     receiver:{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "teamMember",
+            ref: "User",
         required:[true,"you should assigned this document to "]},
     file_url:{type:String},
-    ticket_id:{type:mongoose.Schema.Types.ObjectId,required:[true,"ticket should be selected"]}
+    ticket_id:{type:mongoose.Schema.Types.ObjectId, ref: "Ticket", required:[true,"ticket should be selected"]}
 })
 module.exports = mongoose.model('Document',documentSchema)
