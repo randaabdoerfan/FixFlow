@@ -16,6 +16,6 @@ mongoose.connect(process.env.mongo_atlas)
 app.use('/users',userRoutes)
 app.use('/documents',documentRoutes)
 app.use(handleError);
-app.listen(process.env.port,()=>{
+app.listen(8000,()=>{
     console.log("Server Running ...")
 })

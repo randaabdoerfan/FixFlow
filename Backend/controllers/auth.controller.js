@@ -6,8 +6,15 @@ const { getUserByEmail, getUserById } = require('./user.controller');
 
 exports.registerUser = async (req, res) => {
     try {
-        const avatar = req.file.path
-        const userData = { ...req.body, avatar };
+        if(req.file){
+            const avatar = req.file.path
+            const userData = { ...req.body, avatar };
+            const token = generateToken(newUser, 'verify');
+        await WelcomeAndSendVerifcation(newUser.email, newUser.name, token);
+        res.status(201).json({ message: "User created successfully", user: newUser });
+        }
+        
+        const userData = { ...req.body};
         const newUser = await RegisterUser(userData);
         const token = generateToken(newUser, 'verify');
         await WelcomeAndSendVerifcation(newUser.email, newUser.name, token);

@@ -2,7 +2,7 @@ const transporter = require('../config/email.config')
 
 exports.WelcomeAndSendVerifcation = async (email, username, token) => {
     try {
-        const link = `http://localhost:3000/users/verify/${token}`
+        const link = `http://localhost:8000/users/verify/${token}`
         await transporter.sendMail({
             from: `"Incident Management System" <${process.env.email_user}>`,
             to: email,
@@ -50,7 +50,7 @@ exports.changePasswordEmail = async (email, username) => {
 
 exports.resetPasswordEmail = async (email, username, token) => {
     try {
-        const link = `http://localhost:3000/users/resetpassword/${token}`
+        const link = `http://localhost:8000/users/resetpassword/${token}`
         await transporter.sendMail({
             from: `"Incident Management System" <${process.env.email_user}>`,
             to: email,
