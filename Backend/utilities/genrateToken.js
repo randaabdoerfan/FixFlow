@@ -27,8 +27,9 @@ const generateToken =(user,type)=>{
         {
             userId: user._id,
             email: user.email,
-            type:type,
-            role:user.role
+            role:user.role,
+            type:type
+            
         }
         ,process.env.SECERT_KEY,
         { expiresIn }

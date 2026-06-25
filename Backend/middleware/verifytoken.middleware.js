@@ -8,6 +8,7 @@ const verifyToken = (type) =>{return (req, res, next) => {
         }
         const payload = jwt.verify(token, process.env.SECERT_KEY);
         req.user = payload;
+        // console.log(req.user)
         if (payload.type !== type) {
             return res.status(403).json({ message: 'Forbidden' });
         }

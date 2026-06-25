@@ -13,16 +13,19 @@ const {
     updatePassword,
     updateAvatar} = require('../controllers/user.controller');
 
-const { registerUser, loginUser,verifyEmail,ChangePassword,resetPassword ,redirectLogin} = require('../controllers/auth.controller');
+const { registerUser, loginUser,verifyEmail,ChangePassword,resetPassword ,confirmResetPassword,redirectLogin} = require('../controllers/auth.controller');
 const { upload } = require('../middleware/uploadfile.middleware');
 const validate = require('../middleware/vaildate.middleware');
 const verifyToken = require('../middleware/verifytoken.middleware');
 
 
 router.post('/register', upload.single('avatar'), registerUser); //register
-router.get('/verify/:token', verifyToken('verify'),verifyToken('refresh') ,verifyEmail); //verify email
-router.post('/changepassword/:id',ChangePassword); //change password
-router.post('/rersetpassword',verifyToken('reset'),resetPassword); //reset password
+router.get('/verify/:token', verifyToken('verify'),verifyEmail); //verify email
+router.post('/changepassword', verifyToken('login'), ChangePassword);  //change password
+// router.post('/changepassword/:id',ChangePassword);
+router.post('/resetpassword',resetPassword); //reset password
+router.post('/resetpassword/:token', verifyToken('reset'), confirmResetPassword);
+// router.get('/resetpassword/:token',verifyToken('reset'),resetPassword); //reset password
 // router.get('/redirect',verifyToken('login'),redirectLogin)
 
 router.post('/login', loginUser); //login

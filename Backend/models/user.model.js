@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
       match: [/^(01)[0-2,5]{1}[0-9]{8}$/, 'Please provide a valid phone number'],
       default: null
     },
-    avatar: { type: String, default: null },
+    avatar: { type: String, default: "https://res.cloudinary.com/dngkblgyf/image/upload/ar_1:1,c_crop,g_auto:face,w_300/r_max/co_rgb:68D2E7,e_outline:outer:15/" },
     isActive: { type: Boolean, default: true },
     isEmailVerified: { type: Boolean, default: false }, //emailServices
     lastLogin: { type: Date, default: null },
@@ -38,9 +38,20 @@ const userSchema = new mongoose.Schema(
     passwordResetExpires: { type: Date, select: false },
     refreshTokenHash: { type: String, select: false },
     managerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    verificationExpiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000)
+    },
+    refreshTokenExpiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    }
   },
   { timestamps: true }
 );
+
+userSchema.index({ verificationExpiresAt: 1 }, { expireAfterSeconds: 0 })
+// userSchema.index({ refreshTokenExpiresAt: 1 }, { refreshTokenExpiresAt: 0 })
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) { return; }
   this.password = await bcrypt.hash(this.password, 10);
