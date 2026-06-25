@@ -9,7 +9,7 @@ const mongoose= require('mongoose')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-mongoose.connect("mongodb://localhost:27017/Graduation")
+mongoose.connect(process.env.mongo_atlas)
 .then(()=>{console.log("database connected ..")})
 .catch((err)=>{console.log(err)})
 

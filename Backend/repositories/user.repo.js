@@ -25,7 +25,7 @@ exports.deleteUser = async (id) => {
     return await User.findByIdAndDelete(id)
 }
 exports.getUserByEmail = async (email) => {
-    return await User.findOne({ email }).select('+password')
+    return await User.findOne({ email })
 }
 
 exports.getUserByTeam = async (teamId) => {
