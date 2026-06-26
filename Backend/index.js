@@ -8,6 +8,15 @@ const config = dotenv.config({path:'./config/.env'})
 const mongoose= require('mongoose')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+app.use(cors({
+    origin: "http://localhost:3000", 
+    credentials: true
+}));
+
+app.use(cookieParser());
 
 mongoose.connect(process.env.mongo_atlas)
 .then(()=>{console.log("database connected ..")})

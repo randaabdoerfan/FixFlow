@@ -1,4 +1,4 @@
-const { RegisterUser, initiateReset, confirmReset, resetPassword, changePassword, verifyEmail, loginUser,logout } = require('../services/auth.service');
+const { RegisterUser, initiateReset, confirmReset, resetPassword, changePassword, verifyEmail, loginUser, logout } = require('../services/auth.service');
 const generateToken = require('../utilities/genrateToken');
 const AppError = require('../utilities/appError');
 const { WelcomeAndSendVerifcation, changePasswordEmail, resetPasswordEmail } = require('../services/email.service');
@@ -6,15 +6,9 @@ const { getUserByEmail, getUserById } = require('./user.controller');
 
 exports.registerUser = async (req, res) => {
     try {
-        if(req.file){
-            const avatar = req.file.path
-            const userData = { ...req.body, avatar };
-            const token = generateToken(newUser, 'verify');
-        await WelcomeAndSendVerifcation(newUser.email, newUser.name, token);
-        res.status(201).json({ message: "User created successfully", user: newUser });
-        }
-        
-        const userData = { ...req.body};
+
+        const avatar = req.file ? req.file.path : "https://res.cloudinary.com/dngkblgyf/image/upload/ar_1:1,c_crop,g_auto:face,w_300/r_max/co_rgb:68D2E7,e_outline:outer:15/"
+        const userData = { ...req.body, avatar };
         const newUser = await RegisterUser(userData);
         const token = generateToken(newUser, 'verify');
         await WelcomeAndSendVerifcation(newUser.email, newUser.name, token);
@@ -57,24 +51,20 @@ exports.verifyEmail = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
     try {
-        if (req.query) {
-            const { email, password } = req.query
-            const user = await loginUser({ email, password });
-            const token = generateToken(user, 'login');
-            const refreshToken = generateToken(user, 'refresh')
-            user.refreshTokenHash = refreshToken;
-            await user.save();
-            res.status(200).json({ message: 'Login successful', user, token: token, refresh: refreshToken });
-        }
-        if (!req.query) {
-            const { email, password } = req.body;
-            const user = await loginUser(req.body);
-            const token = generateToken(user, 'login');
-            const refreshToken = generateToken(user, 'refresh')
-            user.refreshTokenHash = refreshToken;
-            await user.save();
-            res.status(200).json({ message: 'Login successful', user, token: token, refresh: refreshToken });
-        }
+        const { email, password } = req.body;
+        const user = await loginUser(req.body);
+        const token = generateToken(user, 'login');
+        const refreshToken = generateToken(user, 'refresh')
+        user.refreshTokenHash = refreshToken;
+        await user.save();
+        res.cookie("refreshToken", refreshToken, {
+            httponly: true,
+            sceure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
+        res.status(200).json({ message: 'Login successful', user, token: token, refresh: refreshToken });
+
     } catch (err) {
         console.log(err);
         res.status(400).json({
@@ -135,9 +125,9 @@ exports.logout = async (req, res) => {
     try {
 
         const userId = req.user.userId;
-        
+
         await logout(userId);
-        
+
 
         res.clearCookie("refreshToken");
 
