@@ -1,8 +1,15 @@
 const ticketRepo = require('../repositories/tickets.repo')
+<<<<<<< HEAD
+const appError = require('../utilities/appError')
+
+exports.createTicket = async (data) => {
+    if (!data) { throw new appError("no data", 400) }
+=======
 const AppError = require('../utilities/appError')
 
 exports.createTicket = async (data) => {
     if (!data) { throw new AppError("no data", 400) }
+>>>>>>> origin/main
     return await ticketRepo.createTicket(data)
 }
 
@@ -11,6 +18,10 @@ exports.getAllTickets = async () => {
 }
 
 exports.getTicketById = async (id) => {
+<<<<<<< HEAD
+    if (!id) { throw new appError("no id please add the id", 400) }
+    return await ticketRepo.getTicketById(id)
+=======
     if (!id) { throw new AppError("no id please add the id", 400) }
     return await ticketRepo.getTicketById(id)
 }
@@ -48,4 +59,5 @@ exports.getTicketInfo = async (id)=>{
 
 exports.updateStatus = async (id,status)=>{
     return await ticketRepo.updateStatus(id,status)
+>>>>>>> origin/main
 }
