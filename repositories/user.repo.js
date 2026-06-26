@@ -25,7 +25,7 @@ exports.deleteUser = async (id) => {
     return await User.findByIdAndDelete(id)
 }
 exports.getUserByEmail = async (email) => {
-    return await User.findOne({ email }).select('+password')
+    return await User.findOne({ email:email })
 }
 
 exports.getUserByTeam = async (teamId) => {
@@ -51,3 +51,15 @@ exports.getUserInformation = async (id) => {
         .populate("phone")
         .populate("avatar")
 }
+exports.logoutUser = async (userId) => {
+    return await User.findByIdAndUpdate(
+        userId,
+        {
+            $unset: {
+                refreshTokenHash: 1,
+                refreshTokenExpiresAt: 1
+            }
+        },
+        { new: true }
+    );
+};
