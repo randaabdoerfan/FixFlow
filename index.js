@@ -3,6 +3,8 @@ const app = express()
 const dotenv = require('dotenv')
 const userRoutes = require('./routes/user.route')
 const documentRoutes = require('./routes/document.route')
+const teamRoutes = require('./routes/team.route')
+const ticketRoutes = require('./routes/ticket.route')
 const handleError = require('./middleware/handleError.middleware')
 const config = dotenv.config({path:'./config/.env'})
 const mongoose= require('mongoose')
@@ -15,7 +17,9 @@ mongoose.connect("mongodb://localhost:27017/Graduation")
 
 app.use('/users',userRoutes)
 app.use('/documents',documentRoutes)
+app.use('/teams',teamRoutes)
+app.use('/tickets',ticketRoutes)
 app.use(handleError);
-app.listen(process.env.port,()=>{
+app.listen(process.env.PORT,()=>{
     console.log("Server Running ...")
 })
