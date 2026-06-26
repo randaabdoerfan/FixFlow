@@ -3,9 +3,11 @@ const messageServices=require("../services/message.service")
 exports.sendMessage=async(req,res,next)=>{
     try { 
         const result =await messageServices.sendMessage(req.body);
-        const io = req.app.get("io");
 
-io.to(req.body.receiver.toString()).emit("newMessage", result.message);
+ const io = req.app.get("io");
+
+if(io){
+io.to(req.body.receiver.toString()).emit("newMessage", result.message);}
  io.to(req.body.receiver.toString()).emit(
             "newNotification",
             result.notification
@@ -27,7 +29,7 @@ exports.getMessageById=async(req,res,next)=>{
 
 try {
     const message=await messageServices.getMessageById(req.params.id);
-res.status(201).json({
+res.status(200).json({
     status:"success",
     data:message
 })    

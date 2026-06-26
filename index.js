@@ -1,21 +1,47 @@
-const express = require('express')
-const app = express()
-const dotenv = require('dotenv')
-const userRoutes = require('./routes/user.route')
-const documentRoutes = require('./routes/document.route')
-const handleError = require('./middleware/handleError.middleware')
-const config = dotenv.config({path:'./config/.env'})
-const mongoose= require('mongoose')
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+const express = require("express");
+const app = express();
 
-mongoose.connect(process.env.mongo_atlas)
-.then(()=>{console.log("database connected ..")})
-.catch((err)=>{console.log(err)})
+const http = require("http");
+const server = http.createServer(app);
 
-app.use('/users',userRoutes)
-app.use('/documents',documentRoutes)
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config/.env" });
+
+const mongoose = require("mongoose");
+
+const initSocket = require("./socket/socket");
+
+const userRoutes = require("./routes/user.route");
+const documentRoutes = require("./routes/document.route");
+const messageRoutes = require("./routes/message.route");
+const notificationRoutes = require("./routes/notification.route");
+
+const handleError = require("./middleware/handleError.middleware");
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+mongoose
+    .connect(process.env.mongo_atlas)
+    .then(() => console.log("Database connected..."))
+    .catch((err) => console.log(err));
+
+// Initialize Socket.IO
+const io = initSocket(server);
+
+// Make io available in controllers
+app.set("io", io);
+
+// Routes
+app.use("/users", userRoutes);
+app.use("/documents", documentRoutes);
+app.use("/messages", messageRoutes);
+app.use("/notifications", notificationRoutes);
+
+// Error handler
 app.use(handleError);
-app.listen(8000,()=>{
-    console.log("Server Running ...")
-})
+
+// Start server
+server.listen(8000, () => {
+    console.log("Server running on port 8000");
+});

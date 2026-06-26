@@ -3,18 +3,15 @@ const router = express.Router();
 
 const messageController = require("../controllers/message.controller");
 
-// Send a message
-router.post("/create", messageController.sendMessage);
+const verifyToken = require("../middleware/verifytoken.middleware");
 
-// Get a message by id
-router.get("/:id", messageController.getMessageById);
-//:get Mesagge by taket_id
-router.get("/ticket/:ticketId", messageController.getMessagesByTicket);
+router.post("/create", verifyToken, messageController.sendMessage);
 
-// Mark a message as seen
-router.patch("/:id/seen", messageController.markMessageAsSeen);
+router.get("/ticket/:ticketId", verifyToken, messageController.getMessagesByTicket);
 
-// Delete a message
-router.delete("/:id", messageController.deleteMessage);
+router.get("/:id", verifyToken, messageController.getMessageById);
 
+router.patch("/:id/seen", verifyToken, messageController.markMessageAsSeen);
+
+router.delete("/:id", verifyToken, messageController.deleteMessage);
 module.exports = router;

@@ -6,7 +6,7 @@ exports.createNotification=async(req,res,next)=>{
      io.to(req.body.user.toString()).emit("newNotification", notification);
 
     res.status(201).json({
-        seccess:true,
+        success:true,
         data:notification
     })
 
@@ -21,7 +21,7 @@ exports.getUserNotifications=async(req,res,next)=>{
     try {
         const notification=await notificationService.getUserNotifications(req.params.userId);
         res.status(200).json({
-            seccess:true,
+            success:true,
             data:notification
         })
         
@@ -33,7 +33,7 @@ exports.getUnreadNotifications=async(req,res,next)=>{
     try {
         const notification=await notificationService.getUnreadNotifications(req.params.userId);
         res.status(200).json({
-            seccess:true,
+            success:true,
             data:notification
         })
         
@@ -44,9 +44,9 @@ exports.getUnreadNotifications=async(req,res,next)=>{
 
 exports.markNotificationAsSeen=async(req,res,next)=>{
     try {
-        const notification=await notificationService.markNotificationAsSeen(req.params.userId);
+        const notification=await notificationService.markNotificationAsSeen(req.params.id);
          res.status(200).json({
-            seccess:true,
+            success:true,
             data:notification
         })
     } catch (error) {

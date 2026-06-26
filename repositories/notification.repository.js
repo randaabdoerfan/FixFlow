@@ -1,7 +1,7 @@
 const Notification = require('../models/notification.model')
 
-exports.createNotification = async (data) => {
-    return await Notification.create(data);
+exports.createNotification = async (date) => {
+    return await Notification.create(date);
 };
 exports.findNotificationByUser = async (userId) => {
     return await Notification.find({ user: userId })
