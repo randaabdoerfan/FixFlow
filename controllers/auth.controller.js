@@ -12,7 +12,7 @@ exports.registerUser = async (req, res) => {
         const newUser = await RegisterUser(userData);
         const token = generateToken(newUser, 'verify');
         await WelcomeAndSendVerifcation(newUser.email, newUser.name, token);
-        res.status(201).json({ message: "User created successfully", user: newUser });
+        res.status(201).json({ message: "Please check your email and verify your account before logging in.", user: newUser });
     } catch (err) {
         console.log(err);
         res.status(400).json({
