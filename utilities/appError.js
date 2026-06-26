@@ -1,6 +1,8 @@
-const AppError =(message,statuscode)=>{
-    err = new Error(message)
-    err.statuscode = statuscode
-    return err
+class AppError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
 }
-module.exports = AppError
+
+module.exports = AppError;
