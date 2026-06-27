@@ -42,7 +42,6 @@ mongoose
     .then(() => console.log(" Database connected successfully.. "))
     .catch((err) => console.log(err));
 
-
 const io = new Server(server, {
     cors: {
         origin: [

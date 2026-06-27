@@ -14,7 +14,7 @@ exports.getAllLogs=async(req,res)=>{
 }
 exports.getLogsForTicket=async(req,res)=>{
     try{
-        const logs=await logService.getLogsForTicket(req.params,ticketId);
+        const logs=await logService.getLogsForTicket(req.params.ticketId);
         res.json(logs);
     }catch(err){
         res.status(500).json({
