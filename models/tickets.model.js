@@ -20,6 +20,10 @@ const ticketSchema = new mongoose.Schema({
         enum: ["opened", "assignedTo", "inProgress", "resolved", "closed"],
         default: "opened"
     },
+    createdBy:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
+    },
     reportedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

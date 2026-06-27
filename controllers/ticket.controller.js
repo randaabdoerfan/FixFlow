@@ -1,12 +1,32 @@
-const ticketServices = require('../services/ticket.service')
+const ticketServices = require('../services/ticket.service');
+const logService=require('../services/log.service');
 
-exports.createNewTicket= async(req,res)=>{
+exports.createTicket= async(req,res)=>{
     try{
         const newTicket = await ticketServices.createTicket(req.body)
         res.status(201).json(newTicket)
     }catch(err){console.log(err)}
 }
-
+exports.assignTicket=async(req,res)=>{
+    try{
+        const ticket =await ticketServices.assignTicket(req.params.ticketId,req.body.assignedTo);
+        res.json(ticket);
+    }catch(err){
+        res.status(400).json({
+            error:err.message
+        });
+    }
+}
+exports.changeStatus=async(req,res)=>{
+    try{
+        const ticket=await ticketServices.changeStatus(req.params.ticketId,req.body.status);
+        res.json(ticket);
+    }catch(err){
+        res.status(400).json({
+            error:err.message
+        });
+    }
+}
 exports.getAllTickets= async(req,res)=>{
     try{
         const tickets = await ticketServices.getAllTickets()
@@ -32,7 +52,7 @@ exports.updateTicket= async(req,res)=>{
 
 exports.deleteTicket = async(req,res)=>{
     try{
-        const id = req.params.id
+        const id = req.params.ticketId
         const ticket = await ticketServices.deleteTicket(id)
         res.status(200).json(message=`ticket with id ${id} deleted successfully`)
     }catch(err){console.log(err)}

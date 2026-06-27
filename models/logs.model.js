@@ -24,5 +24,5 @@ const logsSchema=new mongoose.Schema({
         ref:'Ticket',
         required:true,
     },
-})
+},{timestamps:true})
 module.exports=mongoose.model('Log',logsSchema)

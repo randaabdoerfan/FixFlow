@@ -1,17 +1,43 @@
 const ticketRepo = require('../repositories/tickets.repo')
-
+const logRepository=require('../repositories/log.repo')
 const appError = require('../utilities/appError')
 
+const VALID_STATUSES = ['opened', 'assignedTo', 'inProgress', 'resolved', 'closed'];
 exports.createTicket = async (data) => {
     if (!data) { throw new appError("no data", 400) }
+    const ticket=await ticketRepo.createTicket(data);
+    await logRepository.create({
+        ticketId:ticket._id,
+        status:ticket.status,
+        client:ticket.createdBy,
+    })
+    return ticket
 }
-
-const AppError = require('../utilities/appError')
-
-exports.createTicket = async (data) => {
-    if (!data) { throw new AppError("no data", 400) }
-
-    return await ticketRepo.createTicket(data)
+async function assignTicket(ticketId,assignedTo) {
+    const ticket = await ticketRepo.updateStatus(ticketId,'assignedTo',{
+        assignedTo:assignedTo});
+        if (!ticket) throw new appError('Ticket not found',404);
+    await logRepository.create({
+        ticketId:ticket._id,
+        status:'assignedTo',
+        assignedTo:assignedTo,
+        client:ticket.createdBy,
+    })
+    return ticket;
+}
+async function changeStatus(ticketId,status) {
+    if(!VALID_STATUSES.includes(status)){
+        throw new appError(`Invalid status: ${status}`,400);
+    }
+    const ticket =await ticketRepo.updateStatus(ticketId,status);
+    if(!ticket)throw new appError('Ticket not found',404);
+    await logRepository.create({
+        ticketId:ticket._id,
+        status,
+        assignedTo:ticket.assignedTo,
+        client:ticket.createdBy,
+    });
+    return ticket;
 }
 
 exports.getAllTickets = async () => {
@@ -23,18 +49,24 @@ exports.getTicketById = async (id) => {
     if (!id) { throw new appError("no id please add the id", 400) }
     return await ticketRepo.getTicketById(id)
 
-    if (!id) { throw new AppError("no id please add the id", 400) }
+    if (!id) { throw new appError("no id please add the id", 400) }
     return await ticketRepo.getTicketById(id)
 }
 
 exports.updateTicket = async (id, data) => {
-    if (!id) { throw new AppError("no id please add the id", 400) }
-    if (!data) { throw new AppError("no data", 400) }
-    return await ticketRepo.updateTicket(id, data)
+    if (!id) { throw new appError("no id please add the id", 400) }
+    if (!data) { throw new appError("no data", 400) }
+    const ticket =await ticketRepo.updateTicket(id, data)
+     await logRepository.create({
+        ticketId:ticket._id,
+        status:ticket.status,
+        client:ticket.createdBy,
+    })
+    return ticket
 }
 
 exports.deleteTicket = async (id) => {
-    if (!id) { throw new AppError("no id please add the id", 400) }
+    if (!id) { throw new appError("no id please add the id", 400) }
     return await ticketRepo.deleteTicket(id)
 }
 
@@ -59,6 +91,13 @@ exports.getTicketInfo = async (id)=>{
 }
 
 exports.updateStatus = async (id,status)=>{
-    return await ticketRepo.updateStatus(id,status)
-
+    const ticket = await ticketRepo.updateStatus(id,status)
+    if(!ticket)throw new appError('Ticket not found',404);
+    await logRepository.create({
+        ticketId:ticket._id,
+        status:ticket.status,
+        client:ticket.createdBy,
+    })
+    return ticket
 }
+module.exports={assignTicket,changeStatus}
