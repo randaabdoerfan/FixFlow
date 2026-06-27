@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const {logStatusChange}=require('../services/log.service');
 const ticketSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -20,6 +20,10 @@ const ticketSchema = new mongoose.Schema({
         enum: ["opened", "assignedTo", "inProgress", "resolved", "closed"],
         default: "opened"
     },
+    createdBy: { 
+        type: mongoose.Schema.Types.ObjectId,
+         ref: 'User'
+         },
     reportedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -46,4 +50,34 @@ const ticketSchema = new mongoose.Schema({
         default: null
     },
 }, { timestamps: true })
+
+ticketSchema.pre('save',function (next){
+    this._statusChanged =this.isNew ||this.isModified('status');
+    next();
+});
+ticketSchema.post('save',async function (doc) {
+    if(this._statusChanged){
+        await logStatusChange({
+            ticketId:doc._id,
+            status:doc.status,
+            assignedTo:doc.assignedTo,
+            client:doc.createdBy,
+        })
+    }
+});
+ticketSchema.pre('findOneAndUpdate',async function (next) {
+    const existing = await this.model.findOne(this.getQuery());
+    this._oldStatus=existing?existing.status:null;
+    next();
+})
+ticketSchema.post('findOneAndUpdate',async function (doc) {
+    if(doc &&doc.status !==this._oldStatus){
+        await logStatusChange({
+            ticketId:doc._id,
+            status:doc.status,
+            assignedTo:doc.assignedTo,
+            client:doc.createdBye,
+        })
+    }
+})
 module.exports = mongoose.model('Ticket', ticketSchema) 
