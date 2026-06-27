@@ -2,21 +2,23 @@ const User = require('../models/user.model');
 const Team = require('../models/teams.model');
 
 exports.createUser = async (data) => {
-    const team = await Team.findOne({ _id: data.team });
-    const teamId = team ? team._id : null;
-    data.team = teamId;
+    const team = data.team ? await Team.findOne({ _id: data.team }) : null;
+    data.team = team ? team._id : null;
     return await User.create(data)
 }
+
 exports.loginUser = async (data) => {
     return await User.findOne({ email: data.email })
 }
+
 exports.getAllUsers = async () => {
-    return await User.find()
+    return await User.find().select('-password -confirmPassword -refreshTokenHash')
 }
 
 exports.getUserById = async (id) => {
     return await User.findById(id)
 }
+
 exports.updateUser = async (id, data) => {
     return await User.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true })
 }
@@ -24,8 +26,9 @@ exports.updateUser = async (id, data) => {
 exports.deleteUser = async (id) => {
     return await User.findByIdAndDelete(id)
 }
+
 exports.getUserByEmail = async (email) => {
-    return await User.findOne({ email:email })
+    return await User.findOne({ email })
 }
 
 exports.getUserByTeam = async (teamId) => {
@@ -33,33 +36,26 @@ exports.getUserByTeam = async (teamId) => {
 }
 
 exports.getUserByRole = async (role) => {
-    return await User.find({ role: role })
+    return await User.find({ role })
 }
 
 exports.updatePassword = async (id, newPassword) => {
     return await User.findByIdAndUpdate(id, { password: newPassword }, { returnDocument: 'after', runValidators: true })
 }
+
 exports.updateAvatar = async (id, avatarUrl) => {
     return await User.findByIdAndUpdate(id, { avatar: avatarUrl }, { returnDocument: 'after', runValidators: true })
 }
 
 exports.getUserInformation = async (id) => {
-    return await User.findById(id)
-        .populate("name")
-        .populate("email")
-        .populate("role")
-        .populate("phone")
-        .populate("avatar")
+    // .populate() only works on ObjectId ref fields, not primitive fields
+    return await User.findById(id).populate('team', 'name').populate('managerId', 'name email')
 }
+
 exports.logoutUser = async (userId) => {
     return await User.findByIdAndUpdate(
         userId,
-        {
-            $unset: {
-                refreshTokenHash: 1,
-                refreshTokenExpiresAt: 1
-            }
-        },
+        { $unset: { refreshTokenHash: 1, refreshTokenExpiresAt: 1 } },
         { new: true }
     );
 };

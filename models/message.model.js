@@ -14,7 +14,7 @@ const messageSchema = new mongoose.Schema({
     ticket_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Ticket',
-        required: true
+        // required: true
     },
     body: {
         type: String,

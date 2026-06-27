@@ -23,19 +23,13 @@ const userValidator = Joi.object({
         }),
 
     password: Joi.string()
-    .min(8)
-    .pattern(/[A-Z]/)
-    .pattern(/[a-z]/)
-    .pattern(/[0-9]/)
-    .pattern(/[@$!%*?&^#()_+\-=[\]{};':"\\|,.<>/?]/)
-    .required()
-    .messages({
-      "string.empty": "Password is required.",
-      "any.required": "Password is required.",
-      "string.min": "Password must be at least 8 characters long.",
-      "string.pattern.base":
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-    }),
+        .min(8)
+        .max(30)
+        .required()
+        .messages({
+            "any.required": "Password is required",
+            "string.min": "Password must be at least 8 characters"
+        }),
 
     confirmPassword: Joi.any()
         .valid(Joi.ref("password"))

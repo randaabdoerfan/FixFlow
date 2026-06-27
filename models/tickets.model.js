@@ -33,10 +33,6 @@ const ticketSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Team"
     },
-    documents: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Document'
-    }],
     resolvedAt: {
         type: Date,
         default: null
