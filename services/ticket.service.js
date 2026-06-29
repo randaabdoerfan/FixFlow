@@ -39,7 +39,7 @@ exports.getTicketByTeam = async (teamId)=>{
     return await ticketRepo.getTicketByTeam(teamId)
 }
 
-exports.getAssignedTickets = async (userId)=>{
+exports.getAssignedTicket= async (userId)=>{
     return await ticketRepo.getAssignedTicket(userId)
 }
 
@@ -119,7 +119,7 @@ exports.assignTicket = async (ticketId, assignedTo, userId) => {
       throw new AppError(`Status change not allowed from ${ticket.status} to ${newStatus}`, 400);
     }
   
-    const isAssignedAgent = ticket.assignedTo?.toString() === user.id;
+    const isAssignedAgent = ticket.assignedTo?.toString() === user.userId;
     const isManagerOrAdmin = ["manager", "admin"].includes(user.role);
   
     if (newStatus === "resolved" && !isAssignedAgent && !isManagerOrAdmin) {
@@ -139,7 +139,5 @@ exports.assignTicket = async (ticketId, assignedTo, userId) => {
   
     return await ticketRepo.updateStatus(id, updateData); // fixed: was ticketId
   };
-  
-  // exports.markInProgress — removed, see controller.markInProgress above
 
 

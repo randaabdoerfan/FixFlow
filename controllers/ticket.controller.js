@@ -81,7 +81,7 @@ exports.getTicketInfo = async(req,res)=>{
 exports.assignTicket = async (req, res, next) => {
     try {
       const { assignedTo } = req.body;
-      const ticket = await ticketServices.assignTicket(req.params.id, assignedTo, req.user.id);
+      const ticket = await ticketServices.assignTicket(req.params.id, assignedTo, req.user.userId);
       req.app.get("io").to(assignedTo).emit("ticketAssigned", ticket);
       res.status(200).json({ status: "success", data: ticket });
     } catch (err) {
