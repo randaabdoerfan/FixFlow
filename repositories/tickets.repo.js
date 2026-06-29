@@ -16,7 +16,7 @@ exports.getTicketById = async (id) => {
 }
 
 exports.updateTicket = async (id, data) => {
-    return await Ticket.findByIdAndUpdate(id, {data}, { new: true })
+    return await Ticket.findByIdAndUpdate(id, data, { new: true ,runValidators:true})
 
 }
 exports.deleteTicket = async (id) => {
@@ -31,6 +31,10 @@ exports.getTicketByTeam = async (teamId) => {
     return await Ticket.find({ team: teamId })
 }
 
+exports.getTicketByUserId = async (userId) => {
+    return await Ticket.find({ createdBy: userId })
+}
+
 exports.getAssignedTicket = async (memberId) => {
     return await Ticket.find({ assignedTo: memberId })
 }
@@ -39,12 +43,14 @@ exports.getTicketByStatus = async (status) => {
     return await Ticket.find({ status: status })
 }
 
-exports.getInformationTicket = async (id) => {
+exports.getTicketInfo = async (id) => {
     return await Ticket.findById(id)
-        .populate("title")
+        
         .populate("createdBy")
         .populate("assignedTo")
+        .populate("team");
 }
-exports.updateStatus= async(id,status)=>{
-    return await Ticket.findByIdAndUpdate(id,{status},{new:true})
-}
+
+exports.updateStatus = async (id, data) => {
+    return await Ticket.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+  };

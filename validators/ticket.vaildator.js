@@ -11,14 +11,11 @@ const ticketVaildator = joi.object({
     }),
     status: joi.string().valid(
         'opened',
-        'assigned',
+        'assignedTo',
         'inProgress',
         'resolved',
         'closed'
 
-    ),teamLeader:joi.string().required().messages({
-        "any.required":"You Should select team"
-    })
-
+    )
 })
 module.exports = ticketVaildator

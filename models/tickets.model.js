@@ -20,18 +20,20 @@ const ticketSchema = new mongoose.Schema({
         enum: ["opened", "assignedTo", "inProgress", "resolved", "closed"],
         default: "opened"
     },
-    reportedBy: {
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "You should login first"]
     },
     assignedTo: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        default: null
     },
     team: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Team"
+        ref: "Team",
+        default: null
     },
     resolvedAt: {
         type: Date,

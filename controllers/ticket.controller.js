@@ -21,6 +21,14 @@ exports.getTicketById= async(req,res)=>{
     }catch(err){console.log(err)}
 }
 
+exports.getTicketByUserId= async(req,res)=>{
+    try{
+        const id = req.params.id
+        const ticket = await ticketServices.getTicketByUserId(id)
+        res.status(200).json(ticket)
+    }catch(err){console.log(err)}
+}
+
 exports.updateTicket= async(req,res)=>{
     try{
         const id = req.params.id
@@ -70,10 +78,34 @@ exports.getTicketInfo = async(req,res)=>{
     }catch(err){console.log(err)}
 }
 
-exports.getTicketByStatus= async(req,res)=>{
-    try{
-        const status = req.params.status
-        const ticket = await ticketServices.getTicketByStatus(status)
-        res.status(200).json(ticket)
-    }catch(err){console.log(err)}
-}
+exports.assignTicket = async (req, res, next) => {
+    try {
+      const { assignedTo } = req.body;
+      const ticket = await ticketServices.assignTicket(req.params.id, assignedTo, req.user.id);
+      req.app.get("io").to(assignedTo).emit("ticketAssigned", ticket);
+      res.status(200).json({ status: "success", data: ticket });
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  exports.changeTicketStatus = async (req, res, next) => {
+    try {
+      const { status } = req.body;
+      const ticket = await ticketServices.changeStatus(req.params.id, status, req.user);
+      res.status(200).json({ status: "success", data: ticket });
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  exports.markInProgress = async (req, res, next) => {
+    try {
+      // "inProgress" is just another state-machine transition — reuse changeStatus
+      // so the assigned-agent / manager permission checks still apply
+      const ticket = await ticketServices.changeStatus(req.params.id, "inProgress", req.user);
+      res.status(200).json({ status: "success", data: ticket });
+    } catch (err) {
+      next(err);
+    }
+  };

@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-dotenv.config({ path: "./config/.env" });
+dotenv.config();
 
 
 const userRoutes = require("./routes/user.route");
@@ -87,6 +87,6 @@ app.use("/notifications", notificationRoutes);
 app.use(handleError);
 
 
-server.listen(8001, () => {
-    console.log(` Server running on port ${8001}`);
+server.listen(3000, () => {
+    console.log(` Server running on port 3000`);
 });
