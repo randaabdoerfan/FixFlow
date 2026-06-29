@@ -19,6 +19,7 @@ const teamRoutes = require("./routes/team.route");
 const ticketRoutes = require("./routes/ticket.route");
 const messageRoutes = require("./routes/message.route");
 const notificationRoutes = require("./routes/notification.routes");
+const logRoutes = require("./routes/log.route");
 
 const handleError = require("./middleware/handleError.middleware");
 
@@ -81,6 +82,7 @@ app.use("/teams", teamRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/messages", messageRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/logs",logRoutes);
 
 
 app.use(handleError);

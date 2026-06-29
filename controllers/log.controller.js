@@ -1,4 +1,4 @@
-const Log =require('../models/Log');
+const Log =require('../models/logs.model');
 const logService=require('../services/log.service')
 exports.getAllLogs=async(req,res)=>{
     try{
