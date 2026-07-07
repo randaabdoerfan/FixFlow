@@ -43,7 +43,7 @@ A full-stack ticket management system with role-based dashboards, real-time chat
 cd Backend
 npm install
 # configure .env with MONGO_URI, JWT_SECRET, EMAIL_*, CLOUDINARY_*
-npm run dev
+nodemon index.js
 ```
 
 ### Frontend
